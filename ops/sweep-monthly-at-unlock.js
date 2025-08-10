@@ -49,10 +49,8 @@ const ERC20_ABI = ['function balanceOf(address) view returns (uint256)'];
   console.log('balance :', ethers.formatEther(balance));
   console.log('excess  :', ethers.formatEther(excess));
 
-  if (!inWindow) {
-    console.log('Skip: not within unlock window. Safer to run close to next unlock.');
-    return;
-  }
+  // We will attempt unlock regardless of inWindow; if time hasn't passed, contract does nothing.
+  // inWindow is logged only for reference.
 
   // Step 1: optional reconcile to move excess -> monthly
   let monthlyPreUnlock = monthly0;
@@ -66,7 +64,7 @@ const ERC20_ABI = ['function balanceOf(address) view returns (uint256)'];
   }
   console.log('monthly before unlock (after reconcile if any):', ethers.formatEther(monthlyPreUnlock));
 
-  // Step 2: trigger unlock (requires UNLOCKER_ROLE)
+  // Step 2: trigger unlock (requires UNLOCKER_ROLE). If month not elapsed, it will be a no-op.
   try {
     const tx2 = await c.unlockAndRefillMonthlyPool();
     console.log('unlockAndRefillMonthlyPool tx:', tx2.hash);
