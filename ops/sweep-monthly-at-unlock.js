@@ -36,7 +36,7 @@ const ERC20_ABI = ['function balanceOf(address) view returns (uint256)'];
 
   const now = BigInt(Math.floor(Date.now() / 1000));
   const nextUnlock = lastTs + dur;
-  const driftBefore = 180n;   // 3 мин до окна
+  const driftBefore = 300n;   // 5 мин до окна
   const driftAfter  = 60n;    // 1 мин после окна
   const inWindow = now + driftBefore >= nextUnlock && now <= nextUnlock + driftAfter;
 
