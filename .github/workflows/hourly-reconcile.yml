@@ -45,6 +45,11 @@ jobs:
       - name: Read status (before)
         run: node ops/read-status.js
 
+      - name: Hourly Reconcile Near Unlock
+        run: node ops/sweep-monthly-at-unlock.js
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
       - name: Reconcile (unconditional)
         run: node ops/reconcile-only.js
         env:
