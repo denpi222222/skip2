@@ -1,0 +1,11 @@
+{
+  "name": "ops-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "ethers": "^6.15.0"
+  }
+}
+
+

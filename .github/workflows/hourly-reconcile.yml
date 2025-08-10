@@ -1,0 +1,56 @@
+name: Hourly Reconcile Near Unlock
+
+on:
+  push:
+    paths:
+      - 'ops/**'
+      - '.github/workflows/hourly-reconcile.yml'
+  schedule:
+    # Каждый час в 55 минут (UTC)
+    - cron: '55 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hourly-reconcile
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      APECHAIN_RPC: 'https://apechain.calderachain.xyz'
+      CUBE_PROXY: '0x7dFb75F1000039D650A4C2B8a068f53090e857dD'
+    steps:
+      - name: Checkout (sparse)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          sparse-checkout: |
+            ops/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps (ops)
+        working-directory: ops
+        run: npm i --no-audit --no-fund
+
+      - name: Read status (before)
+        run: node ops/read-status.js
+
+      - name: Reconcile within unlock window
+        run: node ops/sweep-monthly-at-unlock.js
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Read status (after)
+        run: node ops/read-status.js
+
+
