@@ -6,8 +6,8 @@ on:
       - 'ops/**'
       - '.github/workflows/hourly-reconcile.yml'
   schedule:
-    # Каждые 5 минут (UTC), чтобы точно попасть в окно
-    - cron: '*/5 * * * *'
+    # Раз в час, в 55 минут (UTC) — за 5 минут до предполагаемого unlock
+    - cron: '55 * * * *'
   workflow_dispatch: {}
 
 permissions:
